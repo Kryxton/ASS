@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$ASS (CTO)</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1, p {
+            margin: 10px 0;
+            word-wrap: break-word;
+        }
+
+        /* Image container */
+        .image-container {
+            width: 100%;
+            max-width: 400px;
+            height: 180px;
+            background-color: white;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        /* Social buttons */
+        .socials {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .socials a {
+            display: block;
+            text-decoration: none;
+            background-color: white;
+            color: black;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            transition: 0.2s;
+        }
+        .socials a:hover {
+            background-color: gray;
+        }
+
+        /* Contract Address Section */
+        .ca-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        .ca-box {
+            background-color: white;
+            color: black;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            max-width: 100%;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .copy-btn {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            width: 120px;
+        }
+        .copy-btn:hover {
+            background-color: gray;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            width: 100%;
+            max-width: 500px;
+            height: 350px;
+            background-color: white;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+       .chart-container iframe {
+    width: 100%; /* Make the chart take full width */
+    height: 600px; /* Increase chart height */
+}
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+                padding: 10px;
+            }
+            .image-container {
+                height: 150px;
+            }
+            .ca-box {
+                font-size: 12px;
+                padding: 10px;
+            }
+            .copy-btn {
+                width: 100px;
+                padding: 8px;
+                font-size: 12px;
+            }
+            .chart-container {
+                height: 250px; /* Reduce chart height on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>$ASS (CTO)</h1>
+        <p>EVERYBODY LOVES ASS</p>
+        
+        <div class="image-container">
+            <img src="ass.jpeg" alt="$bolzcoin" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+
+        <div class="socials">
+            <a href="https://t.me/ass_onsol" target="_blank">Telegram</a>
+            <a href="https://dexscreener.com/solana/63Kk4hY4H1LyWrgyL3JBqvmHXZnSeWqxSzizGy9yJTzN" target="_blank">Dexscreener</a>
+        </div>
+
+        <div class="ca-container">
+            <p>Contract Address:</p>
+            <div class="ca-box" id="ca">9EURXRmP9BGtr6Jop8yu3HJksSFvmBVH6zhUTU6Mpump</div>
+            <button class="copy-btn" onclick="copyCA()">Copy</button>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container">
+            <!-- Embed your chart here -->
+          <iframe 
+	width="100%" 
+	height="600" 
+	src="https://birdeye.so/tv-widget/9EURXRmP9BGtr6Jop8yu3HJksSFvmBVH6zhUTU6Mpump?chain=solana&viewMode=pair&chartInterval=15&chartType=Candle&chartTimezone=Europe%2FBerlin&chartLeftToolbar=show&theme=dark&cssCustomProperties=--tv-color-platform-background%3A%23000000&cssCustomProperties=--tv-color-pane-background%3A%23000000&chartOverrides=paneProperties.backgroundGradientEndColor%3Argba%280%2C+0%2C+0%2C+1%29&chartOverrides=paneProperties.backgroundGradientStartColor%3Argba%280%2C+0%2C+0%2C+1%29" 
+	frameborder="0" 
+	allowfullscreen>
+</iframe>
+        </div>
+    </div>
+
+    <script>
+        function copyCA() {
+            const caText = document.getElementById("ca").textContent;
+            navigator.clipboard.writeText(caText).then(() => {
+                alert("Contract Address copied!");
+            });
+        }
+    </script>
+
+</body>
+</html>
