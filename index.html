@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -72,6 +72,33 @@
       background-color: gray;
     }
 
+    /* Game Section */
+    .game-section {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 500px;
+      padding: 15px;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+    }
+    .game-section h2 {
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+    .play-game-btn {
+      background-color: white;
+      color: black;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .play-game-btn:hover {
+      background-color: gray;
+    }
+
     /* How to Buy Section */
     .how-to-buy {
       margin-top: 20px;
@@ -116,7 +143,7 @@
       flex: 1;
       font-weight: bold;
     }
-    /* Remove extra link coloring in the guide */
+    /* Entferne besondere Linkfarben in diesem Bereich */
     .how-to-buy a {
       font-weight: bold;
       color: inherit;
@@ -235,6 +262,13 @@
       <a href="https://dexscreener.com/solana/63Kk4hY4H1LyWrgyL3JBqvmHXZnSeWqxSzizGy9yJTzN" target="_blank">Dexscreener</a>
     </div>
 
+    <!-- Game Section -->
+    <div class="game-section">
+      <h2>Game Section</h2>
+      <p>Try snake!</p>
+      <button class="play-game-btn" onclick="location.href='snake.html'">Play Snake</button>
+    </div>
+
     <!-- How to Buy Section -->
     <div class="how-to-buy">
       <h2>How to Buy $ASS</h2>
@@ -256,9 +290,7 @@
 
       <div class="buy-step">
         <span class="step-number">4</span>
-        <p>
-          Go to Jupiter and connect your wallet.
-        </p>
+        <p>Go to <a href="https://birdeye.so" target="_blank">Birdeye</a> and connect your wallet.</p>
       </div>
 
       <div class="buy-step">
@@ -280,22 +312,17 @@
 
     <!-- Chart Container -->
     <div class="chart-container">
-      <iframe 
-        src="https://birdeye.so/tv-widget/9EURXRmP9BGtr6Jop8yu3HJksSFvmBVH6zhUTU6Mpump?chain=solana&viewMode=pair&chartInterval=15&chartType=Candle&chartTimezone=Europe%2FBerlin&chartLeftToolbar=show&theme=dark&cssCustomProperties=--tv-color-platform-background%3A%23000000&cssCustomProperties=--tv-color-pane-background%3A%23000000&chartOverrides=paneProperties.backgroundGradientEndColor%3Argba(0,%200,%200,%201)&chartOverrides=paneProperties.backgroundGradientStartColor%3Argba(0,%200,%200,%201)" 
-        frameborder="0" 
-        allowfullscreen>
-      </iframe>
+      <iframe src="https://birdeye.so/tv-widget/9EURXRmP9BGtr6Jop8yu3HJksSFvmBVH6zhUTU6Mpump?chain=solana&amp;viewMode=pair&amp;chartInterval=15&amp;chartType=Candle&amp;chartTimezone=Europe%2FBerlin&amp;chartLeftToolbar=show&amp;theme=dark&amp;cssCustomProperties=--tv-color-platform-background%3A%23000000&amp;cssCustomProperties=--tv-color-pane-background%3A%23000000&amp;chartOverrides=paneProperties.backgroundGradientEndColor%3Argba(0,%200,%200,%201)&amp;chartOverrides=paneProperties.backgroundGradientStartColor%3Argba(0,%200,%200,%201)" frameborder="0" allowfullscreen></iframe>
     </div>
 
     <!-- Meme Section -->
     <div class="meme-section">
       <h2>Meme Section</h2>
       <div class="meme-grid">
-        <img src="Ass1.JPG" alt="Meme 1" />
-        <img src="Ass2.JPG" alt="Meme 2" />
-        <img src="Ass3.JPG" alt="Meme 3" />
+        <img src="ass1.jpeg" alt="Meme 1" />
+        <img src="ass2.jpeg" alt="Meme 2" />
         <video controls>
-          <source src="Ass1.MOV" type="video/mp4" />
+          <source src="ass1.MOV" type="video/mp4" />
         </video>
       </div>
     </div>
