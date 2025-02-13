@@ -14,16 +14,15 @@
       text-align: center;
     }
     .container {
-      max-width: 400px;
+      max-width: 500px;
       margin: 0 auto;
       padding: 15px;
     }
     h1 {
-      font-size: 22px;
-      margin: 10px 0;
+      margin: 20px 0 10px;
     }
     #scoreDisplay {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       margin-bottom: 10px;
     }
@@ -33,7 +32,6 @@
       margin: 0 auto;
       border: 2px solid white;
       border-radius: 10px;
-      max-width: 100%;
     }
     .back-btn {
       background-color: white;
@@ -49,40 +47,36 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 5px;
+      gap: 10px;
       margin-top: 15px;
     }
     .control-btn {
       background-color: #252525;
       border: none;
       color: white;
-      font-size: 14px;
-      padding: 8px 12px;
+      font-size: 16px;
+      padding: 10px 15px;
       border-radius: 5px;
       cursor: pointer;
-      width: 30%;
-      min-width: 60px;
     }
     @media (max-width: 480px) {
       .container {
-        max-width: 100%;
         padding: 10px;
       }
       canvas {
-        width: 95%;
+        width: 100%;
         height: auto;
       }
-      h1 {
-        font-size: 18px;
+      #scoreDisplay {
+        font-size: 16px;
       }
       .back-btn {
         padding: 8px 16px;
         font-size: 14px;
       }
       .control-btn {
-        font-size: 12px;
-        padding: 6px 10px;
-        width: 30%;
+        font-size: 14px;
+        padding: 8px 12px;
       }
     }
   </style>
@@ -98,91 +92,203 @@
       <button class="control-btn" onclick="rotatePiece()">Rotate</button>
       <button class="control-btn" onclick="moveRight()">Right</button>
       <button class="control-btn" onclick="moveDown()">Down</button>
-      <button class="control-btn" onclick="hardDrop()">Drop</button>
+      <button class="control-btn" onclick="hardDrop()">Hard Drop</button>
     </div>
   </div>
 
   <script>
+    // Canvas and context setup
     const canvas = document.getElementById("tetrisCanvas");
     const ctx = canvas.getContext("2d");
+
+    // Game configuration
     const COLS = 10, ROWS = 20;
-    let blockSize = Math.min(window.innerWidth / COLS * 0.9, 30); // Responsive block size
+    const blockSize = 30; // Size of each block (in pixels)
     canvas.width = COLS * blockSize;
     canvas.height = ROWS * blockSize;
 
-    let board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-    const tetrominoes = {
-      I: [[1,1,1,1]],
-      J: [[1,0,0],[1,1,1]],
-      L: [[0,0,1],[1,1,1]],
-      O: [[1,1],[1,1]],
-      S: [[0,1,1],[1,1,0]],
-      T: [[0,1,0],[1,1,1]],
-      Z: [[1,1,0],[0,1,1]]
-    };
-    const tetrominoTypes = "IJLOSTZ";
-    const blockImage = new Image();
-    blockImage.src = "Ass-tetris.jpg";
+    // Create empty board (2D array)
+    let board = [];
+    for (let r = 0; r < ROWS; r++) {
+      board[r] = [];
+      for (let c = 0; c < COLS; c++) {
+        board[r][c] = 0;
+      }
+    }
 
+    // Tetromino definitions (1 indicates a block)
+    const tetrominoes = {
+      I: [
+        [0,0,0,0],
+        [1,1,1,1],
+        [0,0,0,0],
+        [0,0,0,0]
+      ],
+      J: [
+        [1,0,0],
+        [1,1,1],
+        [0,0,0]
+      ],
+      L: [
+        [0,0,1],
+        [1,1,1],
+        [0,0,0]
+      ],
+      O: [
+        [1,1],
+        [1,1]
+      ],
+      S: [
+        [0,1,1],
+        [1,1,0],
+        [0,0,0]
+      ],
+      T: [
+        [0,1,0],
+        [1,1,1],
+        [0,0,0]
+      ],
+      Z: [
+        [1,1,0],
+        [0,1,1],
+        [0,0,0]
+      ]
+    };
+
+    const tetrominoTypes = "IJLOSTZ";
+
+    // Generate a random tetromino piece
     function randomPiece() {
-      let type = tetrominoTypes[Math.floor(Math.random() * tetrominoTypes.length)];
-      return { shape: tetrominoes[type], x: 3, y: 0 };
+      const type = tetrominoTypes[Math.floor(Math.random() * tetrominoTypes.length)];
+      const shape = tetrominoes[type];
+      return {
+        shape: shape,
+        type: type,
+        x: Math.floor((COLS - shape[0].length) / 2),
+        y: 0
+      };
     }
 
     let currentPiece = randomPiece();
     let score = 0;
-    document.getElementById("scoreDisplay").innerText = "Score: 0";
+    const scoreDisplay = document.getElementById("scoreDisplay");
 
+    // Update score display
+    function updateScoreDisplay() {
+      scoreDisplay.innerText = "Score: " + score;
+    }
+
+    // Load block image (for tetromino blocks)
+    const blockImage = new Image();
+    blockImage.src = "Ass-tetris.jpg"; // Change to your image file
+
+    // Rotate a matrix (clockwise)
     function rotate(matrix) {
-      return matrix[0].map((_, i) => matrix.map(row => row[i])).reverse();
+      const N = matrix.length;
+      const result = [];
+      for (let i = 0; i < N; i++) {
+        result[i] = [];
+        for (let j = 0; j < N; j++) {
+          result[i][j] = matrix[N - j - 1][i];
+        }
+      }
+      return result;
     }
 
+    // Check if piece with given offset/shape is valid
     function isValid(piece, offsetX, offsetY, newShape = piece.shape) {
-      return newShape.every((row, i) =>
-        row.every((cell, j) =>
-          !cell || (
-            piece.x + j + offsetX >= 0 &&
-            piece.x + j + offsetX < COLS &&
-            piece.y + i + offsetY < ROWS &&
-            board[piece.y + i + offsetY]?.[piece.x + j + offsetX] === 0
-          )
-        )
-      );
+      for (let i = 0; i < newShape.length; i++) {
+        for (let j = 0; j < newShape[i].length; j++) {
+          if (newShape[i][j]) {
+            let newX = piece.x + j + offsetX;
+            let newY = piece.y + i + offsetY;
+            if (newX < 0 || newX >= COLS || newY >= ROWS) return false;
+            if (newY < 0) continue;
+            if (board[newY][newX] !== 0) return false;
+          }
+        }
+      }
+      return true;
     }
 
+    // Freeze the current piece onto the board
     function freeze() {
-      currentPiece.shape.forEach((row, i) =>
-        row.forEach((cell, j) => {
-          if (cell) {
-            board[currentPiece.y + i][currentPiece.x + j] = 1;
+      for (let i = 0; i < currentPiece.shape.length; i++) {
+        for (let j = 0; j < currentPiece.shape[i].length; j++) {
+          if (currentPiece.shape[i][j]) {
+            if (currentPiece.y + i < 0) {
+              alert("Game Over!");
+              resetGame();
+              return;
+            }
+            board[currentPiece.y + i][currentPiece.x + j] = currentPiece.type;
           }
-        })
-      );
+        }
+      }
       clearLines();
       currentPiece = randomPiece();
     }
 
+    // Clear complete lines and update score
     function clearLines() {
-      board = board.filter(row => row.some(cell => !cell));
-      while (board.length < ROWS) board.unshift(Array(COLS).fill(0));
-      score += 10;
-      document.getElementById("scoreDisplay").innerText = "Score: " + score;
+      for (let r = ROWS - 1; r >= 0; r--) {
+        if (board[r].every(cell => cell !== 0)) {
+          board.splice(r, 1);
+          board.unshift(new Array(COLS).fill(0));
+          score += 10;
+          updateScoreDisplay();
+          r++;
+        }
+      }
     }
 
+    // Draw the board (frozen blocks)
+    function drawBoard() {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (board[r][c] !== 0) {
+            ctx.drawImage(blockImage, c * blockSize, r * blockSize, blockSize, blockSize);
+          } else {
+            ctx.fillStyle = "#111";
+            ctx.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
+          }
+        }
+      }
+    }
+
+    // Draw the current piece
+    function drawPiece(piece) {
+      for (let i = 0; i < piece.shape.length; i++) {
+        for (let j = 0; j < piece.shape[i].length; j++) {
+          if (piece.shape[i][j]) {
+            ctx.drawImage(blockImage, (piece.x + j) * blockSize, (piece.y + i) * blockSize, blockSize, blockSize);
+          }
+        }
+      }
+    }
+
+    // Draw entire game state
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      board.forEach((row, y) =>
-        row.forEach((cell, x) => {
-          if (cell) ctx.drawImage(blockImage, x * blockSize, y * blockSize, blockSize, blockSize);
-        })
-      );
-      currentPiece.shape.forEach((row, y) =>
-        row.forEach((cell, x) => {
-          if (cell) ctx.drawImage(blockImage, (currentPiece.x + x) * blockSize, (currentPiece.y + y) * blockSize, blockSize, blockSize);
-        })
-      );
+      drawBoard();
+      drawPiece(currentPiece);
     }
 
+    // Reset the game state on Game Over
+    function resetGame() {
+      board = [];
+      for (let r = 0; r < ROWS; r++) {
+        board[r] = [];
+        for (let c = 0; c < COLS; c++) {
+          board[r][c] = 0;
+        }
+      }
+      score = 0;
+      updateScoreDisplay();
+      currentPiece = randomPiece();
+    }
+
+    // Game update: Move current piece down or freeze it
     function update() {
       if (isValid(currentPiece, 0, 1)) {
         currentPiece.y++;
@@ -191,12 +297,15 @@
       }
     }
 
-    let dropCounter = 0, lastTime = 0;
+    // Game loop using requestAnimationFrame for smooth animation
+    let dropCounter = 0;
+    let dropInterval = 1000; // Drop every 1 second
+    let lastTime = 0;
     function updateGame(time = 0) {
-      let deltaTime = time - lastTime;
+      const deltaTime = time - lastTime;
       lastTime = time;
       dropCounter += deltaTime;
-      if (dropCounter > 600) {
+      if (dropCounter > dropInterval) {
         update();
         dropCounter = 0;
       }
@@ -205,22 +314,45 @@
     }
     requestAnimationFrame(updateGame);
 
-    document.addEventListener("keydown", e => {
-      if (e.key === "ArrowLeft" && isValid(currentPiece, -1, 0)) currentPiece.x--;
-      if (e.key === "ArrowRight" && isValid(currentPiece, 1, 0)) currentPiece.x++;
-      if (e.key === "ArrowDown" && isValid(currentPiece, 0, 1)) currentPiece.y++;
-      if (e.key === "ArrowUp") {
+    // Keyboard controls for desktop
+    document.addEventListener("keydown", event => {
+      if (event.keyCode === 37) { // Left arrow
+        if (isValid(currentPiece, -1, 0)) currentPiece.x--;
+      } else if (event.keyCode === 39) { // Right arrow
+        if (isValid(currentPiece, 1, 0)) currentPiece.x++;
+      } else if (event.keyCode === 40) { // Down arrow
+        if (isValid(currentPiece, 0, 1)) currentPiece.y++;
+      } else if (event.keyCode === 38) { // Up arrow = Rotate
         let rotated = rotate(currentPiece.shape);
-        if (isValid(currentPiece, 0, 0, rotated)) currentPiece.shape = rotated;
+        if (isValid(currentPiece, 0, 0, rotated)) {
+          currentPiece.shape = rotated;
+        }
       }
     });
 
-    function moveLeft() { if (isValid(currentPiece, -1, 0)) currentPiece.x--; }
-    function moveRight() { if (isValid(currentPiece, 1, 0)) currentPiece.x++; }
-    function rotatePiece() { let rotated = rotate(currentPiece.shape); if (isValid(currentPiece, 0, 0, rotated)) currentPiece.shape = rotated; }
-    function moveDown() { if (isValid(currentPiece, 0, 1)) currentPiece.y++; }
-    function hardDrop() { while (isValid(currentPiece, 0, 1)) currentPiece.y++; freeze(); }
-
+    // On-screen control functions (for mobile/touch)
+    function moveLeft() {
+      if (isValid(currentPiece, -1, 0)) currentPiece.x--;
+    }
+    function moveRight() {
+      if (isValid(currentPiece, 1, 0)) currentPiece.x++;
+    }
+    function rotatePiece() {
+      let rotated = rotate(currentPiece.shape);
+      if (isValid(currentPiece, 0, 0, rotated)) {
+        currentPiece.shape = rotated;
+      }
+    }
+    function moveDown() {
+      if (isValid(currentPiece, 0, 1)) currentPiece.y++;
+    }
+    // Hard drop: instantly drop the piece until it hits something, then freeze
+    function hardDrop() {
+      while (isValid(currentPiece, 0, 1)) {
+        currentPiece.y++;
+      }
+      freeze();
+    }
   </script>
 </body>
 </html>
