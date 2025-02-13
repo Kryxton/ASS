@@ -34,14 +34,22 @@
         }
 
         /* Image container */
-        .image-container {
-            width: 100%;
-            max-width: 400px;
-            height: 180px;
-            background-color: white;
-            margin: 20px 0;
-            border-radius: 10px;
-        }
+.image-container {
+    width: 100%;
+    max-width: 400px;
+    background-color: white;
+    margin: 20px 0;
+    border-radius: 10px;
+    overflow: hidden; /* Ensures a clean look if the image is larger */
+}
+
+/* Ensure the image retains its original height */
+.image-container img {
+    width: 100%; 
+    height: auto; /* Keeps the aspect ratio */
+    object-fit: cover; /* Ensures it fills the container neatly */
+    display: block; /* Removes any extra spacing */
+}
 
         /* Social buttons */
         .socials {
